@@ -1,0 +1,36 @@
+/* stylesheet for codequiz */
+
+* {
+    margin: 0;
+    padding: 0;
+}
+
+/* Header Style */
+.header-sec{
+    display: flex;
+    justify-content: space-between;
+    padding: 20px;
+}
+
+.highscores {
+    display: flex;
+}
+
+.highscores h3 {
+    margin-right: 20px;
+}
+
+/* Main Style */
+.main-sec {
+    display: flex;
+    height: 80vh;
+}
+
+/* Footer Section Style*/
+.footer-sec {
+    display: flex;
+    justify-content: space-between;
+    padding: 20px;
+}
+
+
