@@ -1,19 +1,46 @@
 /* stylesheet for codequiz */
+:root {
+    --primary-color: #201D39;
+    --secondary-color: #F6F7F5;
+    --tertiary-color: #706F8B;
+}
 
 * {
     margin: 0;
     padding: 0;
 }
 
+body {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 100vh;
+    background-color: var(--secondary-color);
+}
+
+button:hover, a:hover {
+    cursor: pointer;
+}
+
 /* Header Style */
 .header-sec{
     display: flex;
+    flex-wrap: wrap;
     justify-content: space-between;
-    padding: 20px;
+    padding: 10px;
+    text-align: center;
+}
+
+.header-sec h2 {
+    padding:10px;
 }
 
 .highscores {
     display: flex;
+    flex-wrap: wrap;
+    padding: 10px;
+    justify-content: center;
+    text-align: center;
 }
 
 .highscores h3 {
@@ -23,14 +50,78 @@
 /* Main Style */
 .main-sec {
     display: flex;
-    height: 80vh;
+    min-height: 70vh;
+    
+}
+
+.main-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: auto;
+    text-align: center;
+    color: var(--secondary-color);
+}
+
+.welcome-msg {
+    width: 80%;
+    margin: 30px;
+    padding: 50px;
+    border-radius: 10px;
+    background-color: var(--tertiary-color);
+    box-shadow: 0 0 3px var(--primary-color);
+}
+
+.welcome-msg h2 {
+    margin-bottom: 30px;
+}
+
+
+.welcome-msg p {
+    margin-bottom: 30px;
+}
+
+.welcome-msg-button {
+    background: var(--primary-color);
+    box-shadow: 0 0 3px var(--tertiary-color);
+    font-size: 20px;
+    border: none;
+    border-radius: 10px;
+    padding: 10px;
+    color: var(--secondary-color);
+}
+
+.welcome-msg-button:hover {
+    background: var(--secondary-color);
+    color: #201D39;
 }
 
 /* Footer Section Style*/
 .footer-sec {
     display: flex;
     justify-content: space-between;
+    align-items: flex-end;
+    flex-wrap: wrap;
     padding: 20px;
+    background-color: var(--secondary-color);
+    height: 10vh;
 }
 
+.logo-title {
+    margin: 5px 15px;
+}
+
+.copyright-sec {
+    margin: 5px 15px; 
+}
+
+@media only screen and (max-width: 880px) {
+    .header-sec {
+        justify-content: center;
+    }
+
+    .footer-sec {
+        justify-content: center;
+    }
+}
 
