@@ -65,7 +65,7 @@ button:hover, a:hover {
 
 /* Question Container Style */
 .quiz-container {
-    min-width: 50vw;
+    width: 50%;
     margin: 30px;
     padding: 50px;
     border-radius: 10px;
@@ -132,6 +132,27 @@ button:hover, a:hover {
 
 .question-result {
     margin-top: 20px;
+}
+
+/* Final result style */
+.name-input {
+    padding: 10px;
+    border-radius: 10px;
+    border: none;
+    margin-right: 10px;
+}
+
+.name-submit {
+    padding: 10px;
+    border-radius: 5px;
+    border: none;
+    background: var(--primary-color);
+    color: var(--secondary-color);
+}
+
+.name-submit:hover {
+    background: var(--secondary-color);
+    color: #201D39;
 }
 
 /* Footer Section Style*/

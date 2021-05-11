@@ -22,6 +22,10 @@ var dataObj = [
     }
 ];
 
+var userObj = {
+    name: ""
+}
+
 //Select and declare the DOM elements
 var pageContentEl = document.querySelector(".main-container");
 var timeCounter = document.querySelector(".time-counter span");
@@ -57,37 +61,53 @@ startQuizButton.textContent = "Start Quiz";
 startQuizButton.className = "welcome-msg-button"
 welcomeMsg.appendChild(startQuizButton);
 
+
+//create a funtion for the timer
+var timerFunc = function() {
+    setInterval(function() {
+        if (timer > 0 && questionCount < dataObj.length) {
+            timer -= 1;
+        //add the timer to the text content
+        timeCounter.textContent = timer;
+        }
+        else {
+            clearInterval(timerFunc);
+        }
+    }, 1000);
+}
+
+//funtion for the start quiz button
 var startQuizButtonButtonHandler = function () {
+    //run the timer
+    timerFunc();
+
     //remove the welcom msg
     welcomeMsg.remove();
-   //create a funtion for the timer
-var timerFunc = setInterval(function() {
-    if (timer > 0) {
-        timer -= 1;
-    //add the timer to the text content
-    timeCounter.textContent = timer;
-    }
-    else {
-        clearInterval(timerFunc);
-    }
-}, 1000);
-}
+    
+    //generate the 1st quiz
+    quizFunc();
+};
 
 //Variable for the question count
 var questionCount = 0;
 
-var quizFunc = function() {
-    //create a new element for questions
+//funtion to generate the container and title
+var generateQuestion = function(count) {
     var quizContainer = document.createElement("div");
     quizContainer.className = "quiz-container";
     pageContentEl.appendChild(quizContainer);
     //quiz question
     var quizQuestions = document.createElement("h2");
     quizQuestions.className = "quiz-question";
-    quizQuestions.textContent = dataObj[questionCount].question;
+    quizQuestions.textContent = dataObj[count].question;
     quizContainer.appendChild(quizQuestions);
-    
-    //quiz answers
+
+};
+
+//funtion to generate the answers 
+var generateAnswerList = function() {
+    quizContainer = document.querySelector(".quiz-container");
+    //generate the answers from the object
     var answerContainer = document.createElement("div");
     answerContainer.className = "answer-container";
     quizContainer.appendChild(answerContainer);
@@ -95,18 +115,87 @@ var quizFunc = function() {
         var answers = document.createElement("li");
         answers.setAttribute("answer-id", i);
         answers.className = "answer-list";
-        answers.textContent = (i +1) + ". " + dataObj[questionCount].answers[i];
+        answers.textContent = (i + 1) + ". " + dataObj[questionCount].answers[i];
         answerContainer.appendChild(answers);
-    }
+    };
+}
 
-    
-    var answersList = document.querySelector(".answer-container");
-    answersList.addEventListener("click", answerSubmit);
+//funtion to display the final result Page
+var finalResultPage = function() {
+    //create the container
+    var quizContainer = document.createElement("div");
+    quizContainer.className = "quiz-container";
+    pageContentEl.appendChild(quizContainer);
+
+    //display the message
+    var finalMsg = document.createElement("h2");
+    finalMsg.className = "quiz-question";
+    finalMsg.textContent = "All Done!";
+    quizContainer.appendChild(finalMsg);
+
+    //display the score
+    var finalMsg = document.createElement("h2");
+    finalMsg.className = "quiz-question";
+    finalMsg.textContent = "Your Final Score is: " + timer;
+    quizContainer.appendChild(finalMsg);
+
+    //create a form to enter the name
+    var nameForm = document.createElement("form");
+    nameForm.className = "name-form";
+    nameForm.setAttribute("id", "name-form-submit");
+    var nameInput = document.createElement("input");
+    nameInput.className = "name-input";
+    nameInput.setAttribute("type", "text");
+    nameInput.setAttribute("name", "your-name");
+    nameInput.setAttribute("placeholder", "Enter-your-name");
+    nameForm.appendChild(nameInput);
+    quizContainer.appendChild(nameForm);
+
+    //create a submit button
+    var submitButton = document.createElement("button");
+    submitButton.className = "name-submit";
+    submitButton.textContent = "Submit";
+    nameForm.appendChild(submitButton);
+
+    nameForm.addEventListener("submit", nameSubmitFunc);
 
 };
 
 
+//submit name Function
+var nameSubmitFunc = function(event) {
+    event.preventDefault();
+    var nameForm = document.querySelector("#name-form-submit");
+    var userName = document.querySelector(".name-input").value;
+    console.log(userName);
+    console.log(event.target);
 
+    userObj.name = userName;
+
+    nameForm.reset();
+};
+
+var quizFunc = function() {
+     if (questionCount < dataObj.length) {
+
+    //Generate Questions
+    generateQuestion(questionCount);
+    
+    //generate Answerlist
+    generateAnswerList();
+
+    //add an event lister for the answer list
+    var answersList = document.querySelector(".answer-container");
+    answersList.addEventListener("click", answerSubmit);
+
+    timerStop();
+    } else {
+        //display the final result
+        finalResultPage();
+    }
+};
+
+//function to display the result
 var resultFunc = function(answerResult) {
     var quizContainer = document.querySelector(".quiz-container");
     //create a div for the result
@@ -125,35 +214,46 @@ var answerSubmit = function(event) {
     if (event.target.matches(".answer-list")) {
         var answerId = parseInt(event.target.getAttribute("answer-id"));
 
+        //increase the question count by 1
         questionCount += 1;
 
+        //remove the previous quiz
         var quizContainer = document.querySelector(".quiz-container");
         quizContainer.remove();
 
+        //generate the new quiz
         quizFunc();
 
+        //show the result
         if (answerId === dataObj[questionCount - 1].correctAnswer) {
             var correct = "CORRECT";
             resultFunc(correct);
             
             
-        } else {
-            
+        } else {     
             var incorrect = "INCORRECT";
-            resultFunc(incorrect);;
+            resultFunc(incorrect);
+            //reduce the timer by 10 if the answer is incorrect
+            timer -= 10;
         }
-        
-        
+                
     }
 
-    //
 };
 
+//funtion to stop the timer if all question are answered.
+var timerStop = function() {
+    if (questionCount >= dataObj.length) {
+        console.log("Test");
+    }
+}
 
 
 startQuizButton.addEventListener("click", startQuizButtonButtonHandler);
 
-startQuizButton.addEventListener("click", quizFunc);
+
+
+// startQuizButton.addEventListener("click", quizFunc);
 
 
 
