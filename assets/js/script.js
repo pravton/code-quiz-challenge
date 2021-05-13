@@ -19,10 +19,18 @@ var dataObj = [
         question: "Which of the following function of String object returns the calling string value converted to upper case?",
         answers: ["toLocaleUpperCase()", "toString()", "toUpperCase()", "substring()"],
         correctAnswer: 2  
-    }
-];
+    },
+    {
+        question: "What does HTML stands for?",
+        answers: ["Hypertext Machine language", "Hypertext and links markup language", "Hypertext Markup Language", "Hightext machine language"],
+        correctAnswer: 2
+    }];
 
+//Object for user data
 var userObj = [];
+
+//gloabal variable for highscore Status
+var highScoreStatus = "";
 
 //Select and declare the DOM elements
 var pageContentEl = document.querySelector(".main-container");
@@ -32,20 +40,19 @@ var timeCounter = document.querySelector(".time-counter span");
 var timer = 76;
 //Variable for the question count
 var questionCount = 0;
+//variable for interval
+var interval = null;
 
 //create a funtion for the timer
 var timerFunc = function() {
-    setInterval(function() {
-        if (timer > 0 && questionCount < dataObj.length) {
+    interval = setInterval(() => {
             timer -= 1;
-        //add the timer to the text content
-        timeCounter.textContent = timer;
-        }
-        else {
-            clearInterval(timerFunc);
-        }
+            //add the timer to the text content
+            timeCounter.textContent = timer;
     }, 1000);
 };
+
+
 
 //Welcome Message 
 var welcomeMsgFunc = function() {
@@ -79,7 +86,9 @@ var welcomeMsgFunc = function() {
 var startQuizButtonButtonHandler = function () {
     quizContainer = document.querySelector(".quiz-container");
     //run the timer
-    timerFunc();
+    if (timer > 0) {
+        timerFunc();
+    } 
 
     quizContainer.remove();
     
@@ -116,48 +125,6 @@ var generateAnswerList = function() {
     };
 }
 
-//funtion to display the final result Page
-var finalResultPage = function() {
-    //create the container
-    var quizContainer = document.createElement("div");
-    quizContainer.className = "quiz-container";
-    pageContentEl.appendChild(quizContainer);
-
-    //display the message
-    var finalMsg = document.createElement("h2");
-    finalMsg.className = "quiz-question";
-    finalMsg.textContent = "All Done!";
-    quizContainer.appendChild(finalMsg);
-
-    //display the score
-    var finalMsg = document.createElement("h2");
-    finalMsg.className = "quiz-question";
-    finalMsg.textContent = "Your Final Score is: " + timer;
-    quizContainer.appendChild(finalMsg);
-
-    //create a form to enter the name
-    var nameForm = document.createElement("form");
-    nameForm.className = "name-form";
-    nameForm.setAttribute("id", "name-form-submit");
-    var nameInput = document.createElement("input");
-    nameInput.className = "name-input";
-    nameInput.setAttribute("type", "text");
-    nameInput.setAttribute("name", "your-name");
-    nameInput.setAttribute("placeholder", "Enter-your-name");
-    nameForm.appendChild(nameInput);
-    quizContainer.appendChild(nameForm);
-
-    //create a submit button
-    var submitButton = document.createElement("button");
-    submitButton.className = "buttons-style";
-    submitButton.textContent = "Submit";
-    //add the link to go highscore page
-    submitButton.setAttribute("onclick", "document.location='high-scores.html'");
-    nameForm.appendChild(submitButton);
-
-    nameForm.addEventListener("submit", nameSubmitFunc);
-
-};
 
 //function to load the saved data
 var loadScores = function() {
@@ -179,42 +146,6 @@ var loadScores = function() {
     userObj = loadScoreData;
 };
 
-//submit name and save Function
-var nameSubmitFunc = function(event) {
-    event.preventDefault();
-
-    //var nameForm = document.querySelector("#name-form-submit");
-    var userName = document.querySelector(".name-input").value;
-
-    stoppedTime = timer;
-
-    var newUserData = {
-        name: userName,
-        score: stoppedTime
-    };
-
-    
-    if (userObj.length === 0) {
-        //add the new data to userObj
-        userObj.push(newUserData);
-        // save the data in local storage
-        localStorage.setItem("userObj", JSON.stringify(userObj));
-    } else {
-        for (var i = 0; i < userObj.length; i++) {
-            if (stoppedTime > userObj[i].score) {
-            //add the new data to userObj
-            userObj.push(newUserData);
-            console.log(stoppedTime);
-            // save the data in local storage
-            localStorage.setItem("userObj", JSON.stringify(userObj));
-            }  
-        }          
-    }
-
-};
-
-//load the highscores from local storage
-loadScores();
 
 //Function for the Quiz
 var generateQuiz = function() {
@@ -228,10 +159,16 @@ var generateQuiz = function() {
 
     //add an event lister for the answer list
     var answersList = document.querySelector(".answer-container");
-    answersList.addEventListener("click", answerSubmit);
+    setTimeout(() => {
+        answersList.addEventListener("click", answerSubmit);
+    }, 500); 
 
-    timerStop();
+    
     } else {
+        //display the updated timer 
+        setTimeout(() => {
+            clearInterval(interval);
+        }, 500);
         //display the final result
         finalResultPage();
     }
@@ -269,8 +206,7 @@ var answerSubmit = function(event) {
         //show the result
         if (answerId === dataObj[questionCount - 1].correctAnswer) {
             var correct = "CORRECT";
-            resultFunc(correct);
-            
+            resultFunc(correct);    
             
         } else {     
             var incorrect = "INCORRECT";
@@ -283,16 +219,97 @@ var answerSubmit = function(event) {
 
 };
 
-//funtion to stop the timer if all question are answered.
-var timerStop = function() {
-    if (questionCount >= dataObj.length) {
-        console.log("Test");
+//funtion to display the final result Page
+var finalResultPage = function() {
+    //create the container
+    var quizContainer = document.createElement("div");
+    quizContainer.className = "quiz-container";
+    pageContentEl.appendChild(quizContainer);
+
+    //display the message
+    var finalMsg = document.createElement("h2");
+    finalMsg.className = "quiz-question";
+    finalMsg.textContent = "All Done!";
+    quizContainer.appendChild(finalMsg);
+
+    //display the score
+    var finalMsg = document.createElement("h2");
+    finalMsg.className = "quiz-question";
+    quizContainer.appendChild(finalMsg); 
+    setTimeout(() => {
+        finalMsg.textContent = "Your Final Score is: " + timer; 
+    }, 500); 
+
+    //display the updated timer
+    setTimeout(() => {
+        timeCounter.textContent = timer;
+    }, 500);
+
+    
+    //create a form to enter the name
+    var nameForm = document.createElement("form");
+    nameForm.className = "name-form";
+    nameForm.setAttribute("id", "name-form-submit");
+    var nameInput = document.createElement("input");
+    nameInput.className = "name-input";
+    nameInput.setAttribute("type", "text");
+    nameInput.setAttribute("name", "your-name");
+    nameInput.setAttribute("placeholder", "Enter-your-name");
+    nameForm.appendChild(nameInput);
+    quizContainer.appendChild(nameForm);
+
+    //create a submit button
+    var submitButton = document.createElement("button");
+    submitButton.className = "buttons-style";
+    submitButton.textContent = "Submit";
+    //add the link to go highscore page
+    submitButton.setAttribute("onclick", "document.location='high-scores.html'");
+    nameForm.appendChild(submitButton);
+
+    nameForm.addEventListener("submit", nameSubmitFunc);
+
+};
+
+
+//submit name and save Function
+var nameSubmitFunc = function(event) {
+    event.preventDefault();
+
+    //var nameForm = document.querySelector("#name-form-submit");
+    var userName = document.querySelector(".name-input").value;
+
+    //declare variable for stopped time
+    stoppedTime = timer;
+
+    //declare variable for new data
+    var newUserData = {
+        name: userName,
+        score: stoppedTime,
+    };
+
+    //check to see if the user beat the highscore
+    for (var i = 0; i < userObj.length; i++) {
+        if (stoppedTime > userObj[i].score) {
+            highScoreStatus = true;
+        }  
     }
+
+    if (userObj.length === 0 || highScoreStatus) {
+        alert("Congratulations, you beat the highscore!")
+        //add the new data to userObj
+        userObj.push(newUserData);
+        // save the data in local storage
+        localStorage.setItem("userObj", JSON.stringify(userObj));
+    } else {
+        alert("You did not beat the highscore! Please try again!")
+    }
+
+
 };
 
 //load highscores page
 //diplay the final score
-var displayHighScores = function(stoppedTime) {
+var displayHighScores = function() {
     var pageContentEl = document.querySelector(".main-container");
     var highScoreContainer = document.createElement("div");
     highScoreContainer.className = "quiz-container";
@@ -355,11 +372,13 @@ var displayHighScores = function(stoppedTime) {
 
 };
 
+//load the highscores from local storage
+loadScores();
 
 //display the local path 
 console.log(window.location.pathname);
 
-//if the index.html is loaded display the welcome msg
+// if the index.html is loaded display the welcome msg
 if (window.location.pathname == '/C:/Users/clint/projects/assignments/code-quiz-challenge/index.html') {
     addEventListener("onload", welcomeMsgFunc());   
 }
