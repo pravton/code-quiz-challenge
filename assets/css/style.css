@@ -18,6 +18,10 @@ body {
     min-height: 100vh;
 }
 
+h1,h2,h3,h4,h5, p, a {
+    font-family: 'Lato', Helvetica, Arial, sans-serif;
+}
+
 button:hover, a:hover {
     cursor: pointer;
 }
@@ -41,11 +45,27 @@ button:hover, a:hover {
     padding: 10px;
     justify-content: center;
     text-align: center;
+
 }
 
 .highscores h3 {
     margin-right: 20px;
+    background: var(--primary-color);
+    color: var(--secondary-color);
+    padding: 5px 10px;
+    border-radius: 10px;
 }
+
+.highscores h3 a {
+    text-decoration: none;
+    color: var(--secondary-color);
+}
+
+.highscore-title:hover {
+    text-decoration: none;
+    background: var(--tertiary-color);
+}
+
 
 /* Main Style */
 .main-sec {
