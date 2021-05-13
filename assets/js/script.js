@@ -348,7 +348,7 @@ var displayHighScores = function() {
     var goBackButton = document.createElement("button");
     goBackButton.className = "buttons-style";
     goBackButton.textContent = "Go Back";
-    goBackButton.setAttribute("onclick", "document.location='index.html'");
+    goBackButton.setAttribute("onclick", "document.location='/'");
     buttonContainer.appendChild(goBackButton);
     
     
