@@ -22,9 +22,7 @@ var dataObj = [
     }
 ];
 
-var userObj = {
-    name: ""
-}
+var userObj = [];
 
 //Select and declare the DOM elements
 var pageContentEl = document.querySelector(".main-container");
@@ -32,35 +30,8 @@ var timeCounter = document.querySelector(".time-counter span");
 
 //Declare Timer Variable
 var timer = 76;
-
-/* //Obtain the first name from the user 
-var userName = prompt("What is your first name?")
-//display the username
-var userNameDisplay = document.querySelector(".welcomeName span");
-userNameDisplay.textContent = userName; */
-
-//Welcome Message 
-//div for the welcome msg
-var welcomeMsg = document.createElement("div");
-welcomeMsg.className = "quiz-container"
-pageContentEl.appendChild(welcomeMsg);
-
-//welcome message title
-var welcomeMsgTitle = document.createElement("h2");
-welcomeMsgTitle.textContent = "Code Quiz Challenge!";
-welcomeMsg.appendChild(welcomeMsgTitle);
-
-//Welcome msg content
-var welcomeMsgContent = document.createElement("p");
-welcomeMsgContent.textContent = "Try to answer the following code-related questions within the time limit. Keep in mind that incorrect answers will penalize your score/time by 10 seconds!"
-welcomeMsg.appendChild(welcomeMsgContent);
-
-//Welcome msg button
-var startQuizButton = document.createElement("button");
-startQuizButton.textContent = "Start Quiz";
-startQuizButton.className = "welcome-msg-button"
-welcomeMsg.appendChild(startQuizButton);
-
+//Variable for the question count
+var questionCount = 0;
 
 //create a funtion for the timer
 var timerFunc = function() {
@@ -74,22 +45,47 @@ var timerFunc = function() {
             clearInterval(timerFunc);
         }
     }, 1000);
-}
+};
+
+//Welcome Message 
+var welcomeMsgFunc = function() {
+    //div for the welcome msg
+    var welcomeMsg = document.createElement("div");
+    welcomeMsg.className = "quiz-container"
+    pageContentEl.appendChild(welcomeMsg);
+
+    //welcome message title
+    var welcomeMsgTitle = document.createElement("h2");
+    welcomeMsgTitle.textContent = "Code Quiz Challenge!";
+    welcomeMsg.appendChild(welcomeMsgTitle);
+
+    //Welcome msg content
+    var welcomeMsgContent = document.createElement("p");
+    welcomeMsgContent.textContent = "Try to answer the following code-related questions within the time limit. Keep in mind that incorrect answers will penalize your score/time by 10 seconds!"
+    welcomeMsg.appendChild(welcomeMsgContent);
+
+    //Welcome msg button
+    var startQuizButton = document.createElement("button");
+    startQuizButton.textContent = "Start Quiz";
+    startQuizButton.className = "welcome-msg-button"
+    welcomeMsg.appendChild(startQuizButton);
+
+    //add an event listen to startQuizButton
+    startQuizButton.addEventListener("click", startQuizButtonButtonHandler);
+};
+
 
 //funtion for the start quiz button
 var startQuizButtonButtonHandler = function () {
+    quizContainer = document.querySelector(".quiz-container");
     //run the timer
     timerFunc();
 
-    //remove the welcom msg
-    welcomeMsg.remove();
+    quizContainer.remove();
     
     //generate the 1st quiz
-    quizFunc();
+    generateQuiz();
 };
-
-//Variable for the question count
-var questionCount = 0;
 
 //funtion to generate the container and title
 var generateQuestion = function(count) {
@@ -153,29 +149,75 @@ var finalResultPage = function() {
 
     //create a submit button
     var submitButton = document.createElement("button");
-    submitButton.className = "name-submit";
+    submitButton.className = "buttons-style";
     submitButton.textContent = "Submit";
+    //add the link to go highscore page
+    submitButton.setAttribute("onclick", "document.location='high-scores.html'");
     nameForm.appendChild(submitButton);
 
     nameForm.addEventListener("submit", nameSubmitFunc);
 
 };
 
+//function to load the saved data
+var loadScores = function() {
+    //load the saved data
+    var loadScoreData = localStorage.getItem("userObj");
+    //return if these is no data
+    if (!loadScoreData) {
+        return false;
+    }
+    //parse the loaded data
+    loadScoreData = JSON.parse(loadScoreData);
+    
+    //sort the array based on highscores
+    loadScoreData.sort(function(a,b) {
+        return b.score - a.score;
+    })
 
-//submit name Function
-var nameSubmitFunc = function(event) {
-    event.preventDefault();
-    var nameForm = document.querySelector("#name-form-submit");
-    var userName = document.querySelector(".name-input").value;
-    console.log(userName);
-    console.log(event.target);
-
-    userObj.name = userName;
-
-    nameForm.reset();
+    //set loaded data to userObj
+    userObj = loadScoreData;
 };
 
-var quizFunc = function() {
+//submit name and save Function
+var nameSubmitFunc = function(event) {
+    event.preventDefault();
+
+    //var nameForm = document.querySelector("#name-form-submit");
+    var userName = document.querySelector(".name-input").value;
+
+    stoppedTime = timer;
+
+    var newUserData = {
+        name: userName,
+        score: stoppedTime
+    };
+
+    
+    if (userObj.length === 0) {
+        //add the new data to userObj
+        userObj.push(newUserData);
+        // save the data in local storage
+        localStorage.setItem("userObj", JSON.stringify(userObj));
+    } else {
+        for (var i = 0; i < userObj.length; i++) {
+            if (stoppedTime > userObj[i].score) {
+            //add the new data to userObj
+            userObj.push(newUserData);
+            console.log(stoppedTime);
+            // save the data in local storage
+            localStorage.setItem("userObj", JSON.stringify(userObj));
+            }  
+        }          
+    }
+
+};
+
+//load the highscores from local storage
+loadScores();
+
+//Function for the Quiz
+var generateQuiz = function() {
      if (questionCount < dataObj.length) {
 
     //Generate Questions
@@ -222,7 +264,7 @@ var answerSubmit = function(event) {
         quizContainer.remove();
 
         //generate the new quiz
-        quizFunc();
+        generateQuiz();
 
         //show the result
         if (answerId === dataObj[questionCount - 1].correctAnswer) {
@@ -246,19 +288,83 @@ var timerStop = function() {
     if (questionCount >= dataObj.length) {
         console.log("Test");
     }
+};
+
+//load highscores page
+//diplay the final score
+var displayHighScores = function(stoppedTime) {
+    var pageContentEl = document.querySelector(".main-container");
+    var highScoreContainer = document.createElement("div");
+    highScoreContainer.className = "quiz-container";
+    pageContentEl.appendChild(highScoreContainer);
+
+    //Title for highscore
+    var title = document.createElement("h2");
+    title.className = "highscore-title";
+    title.textContent = "High Scores";
+    highScoreContainer.appendChild(title);
+
+    //if the highscores are cleared display a msg
+    if (userObj.length === 0) {
+        var clearMsg = document.createElement("p");
+        clearMsg.textContent = "High Scores are cleared! Please Play Again!";
+        highScoreContainer.appendChild(clearMsg);
+        console.log(userObj);
+    } 
+    //If not display the highscores 
+    else {
+        //display Name and the score
+        var highScore = document.createElement("ul");
+        highScore.className = "highscore-list-container";
+        highScoreContainer.appendChild(highScore);
+
+        //Name and Score
+        for (var i = 0; i < userObj.length; i++) {
+            var highScoreList = document.createElement("li");
+            highScoreList.className = "highscore-list";
+            highScoreList.textContent = (i + 1) + ". " + userObj[i].name + " - " + userObj[i].score;
+            highScore.appendChild(highScoreList);
+        }
+    }
+
+    //buttons for the highscore page
+    var buttonContainer = document.createElement("div");
+    buttonContainer.className = "button-container";
+    highScoreContainer.appendChild(buttonContainer);
+
+    //go back button
+    var goBackButton = document.createElement("button");
+    goBackButton.className = "buttons-style";
+    goBackButton.textContent = "Go Back";
+    goBackButton.setAttribute("onclick", "document.location='index.html'");
+    buttonContainer.appendChild(goBackButton);
+    
+    
+    //funtion to clear the highscore
+    var clearLocalStorage = function() {
+        localStorage.clear();
+    };
+
+    //clear highscores button
+    var clearHighScoreButton = document.createElement("button");
+    clearHighScoreButton.className = "buttons-style";
+    clearHighScoreButton.textContent = "Clear HighScores";
+    buttonContainer.appendChild(clearHighScoreButton);
+    clearHighScoreButton.setAttribute("onclick", "document.location='high-scores.html'")
+    clearHighScoreButton.addEventListener("click", clearLocalStorage);
+
+};
+
+
+//display the local path 
+console.log(window.location.pathname);
+
+//if the index.html is loaded display the welcome msg
+if (window.location.pathname == '/C:/Users/clint/projects/assignments/code-quiz-challenge/index.html') {
+    addEventListener("onload", welcomeMsgFunc());   
 }
-
-
-startQuizButton.addEventListener("click", startQuizButtonButtonHandler);
-
-
-
-// startQuizButton.addEventListener("click", quizFunc);
-
-
-
-
-
-
-
+//if the highscore page is loaded display the highscore 
+else if ((window.location.pathname == '/C:/Users/clint/projects/assignments/code-quiz-challenge/high-scores.html')) {
+    addEventListener("onload", displayHighScores());
+ }
 
