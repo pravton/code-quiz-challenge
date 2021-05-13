@@ -54,6 +54,7 @@ button:hover, a:hover {
     color: var(--secondary-color);
     padding: 5px 10px;
     border-radius: 10px;
+    margin-bottom: 10px;
 }
 
 .highscores h3 a {
@@ -86,7 +87,7 @@ button:hover, a:hover {
 
 /* Question Container Style */
 .quiz-container {
-    width: 50%;
+    min-width: 50%;
     margin: 30px;
     padding: 50px;
     border-radius: 10px;
