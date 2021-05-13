@@ -37,7 +37,7 @@ var pageContentEl = document.querySelector(".main-container");
 var timeCounter = document.querySelector(".time-counter span");
 
 //Declare Timer Variable
-var timer = 76;
+var timer = (dataObj.length * 15) + 1;
 //Variable for the question count
 var questionCount = 0;
 //variable for interval
@@ -52,7 +52,25 @@ var timerFunc = function() {
     }, 1000);
 };
 
+//function to load the saved data
+var loadScores = function() {
+    //load the saved data
+    var loadScoreData = localStorage.getItem("userObj");
+    //return if these is no data
+    if (!loadScoreData) {
+        return false;
+    }
+    //parse the loaded data
+    loadScoreData = JSON.parse(loadScoreData);
+    
+    //sort the array based on highscores
+    loadScoreData.sort(function(a,b) {
+        return b.score - a.score;
+    })
 
+    //set loaded data to userObj
+    userObj = loadScoreData;
+};
 
 //Welcome Message 
 var welcomeMsgFunc = function() {
@@ -123,55 +141,6 @@ var generateAnswerList = function() {
         answers.textContent = (i + 1) + ". " + dataObj[questionCount].answers[i];
         answerContainer.appendChild(answers);
     };
-}
-
-
-//function to load the saved data
-var loadScores = function() {
-    //load the saved data
-    var loadScoreData = localStorage.getItem("userObj");
-    //return if these is no data
-    if (!loadScoreData) {
-        return false;
-    }
-    //parse the loaded data
-    loadScoreData = JSON.parse(loadScoreData);
-    
-    //sort the array based on highscores
-    loadScoreData.sort(function(a,b) {
-        return b.score - a.score;
-    })
-
-    //set loaded data to userObj
-    userObj = loadScoreData;
-};
-
-
-//Function for the Quiz
-var generateQuiz = function() {
-     if (questionCount < dataObj.length) {
-
-    //Generate Questions
-    generateQuestion(questionCount);
-    
-    //generate Answerlist
-    generateAnswerList();
-
-    //add an event lister for the answer list
-    var answersList = document.querySelector(".answer-container");
-    setTimeout(() => {
-        answersList.addEventListener("click", answerSubmit);
-    }, 500); 
-
-    
-    } else {
-        //display the updated timer 
-        setTimeout(() => {
-            clearInterval(interval);
-        }, 500);
-        //display the final result
-        finalResultPage();
-    }
 };
 
 //function to display the result
@@ -188,7 +157,7 @@ var resultFunc = function(answerResult) {
     resultContainer.appendChild(questionResult);
 };
 
-// create a funtion to submit the asnwer
+//funtion for the answer submit
 var answerSubmit = function(event) {
     if (event.target.matches(".answer-list")) {
         var answerId = parseInt(event.target.getAttribute("answer-id"));
@@ -217,6 +186,34 @@ var answerSubmit = function(event) {
                 
     }
 
+};
+
+
+//Function to generate the Quiz
+var generateQuiz = function() {
+     if (questionCount < dataObj.length) {
+
+    //Generate Questions
+    generateQuestion(questionCount);
+    
+    //generate Answerlist
+    generateAnswerList();
+
+    //add an event lister for the answer list
+    var answersList = document.querySelector(".answer-container");
+    setTimeout(() => {
+        answersList.addEventListener("click", answerSubmit);
+    }, 500); 
+
+    
+    } else {
+        //display the updated timer 
+        setTimeout(() => {
+            clearInterval(interval);
+        }, 500);
+        //display the final result
+        finalResultPage();
+    }
 };
 
 //funtion to display the final result Page
@@ -271,7 +268,7 @@ var finalResultPage = function() {
 };
 
 
-//submit name and save Function
+//name submit and save Function
 var nameSubmitFunc = function(event) {
     event.preventDefault();
 
@@ -303,8 +300,6 @@ var nameSubmitFunc = function(event) {
     } else {
         alert("You did not beat the highscore! Please try again!")
     }
-
-
 };
 
 //load highscores page
@@ -375,15 +370,15 @@ var displayHighScores = function() {
 //load the highscores from local storage
 loadScores();
 
-//display the local path 
-console.log(window.location.pathname);
+// //display the local path 
+// console.log(window.location.pathname);
 
 // if the index.html is loaded display the welcome msg
-if (window.location.pathname == '/C:/Users/clint/projects/assignments/code-quiz-challenge/index.html') {
+if (window.location.pathname == '/index.html') {
     addEventListener("onload", welcomeMsgFunc());   
 }
 //if the highscore page is loaded display the highscore 
-else if ((window.location.pathname == '/C:/Users/clint/projects/assignments/code-quiz-challenge/high-scores.html')) {
+else if ((window.location.pathname == '/high-scores.html')) {
     addEventListener("onload", displayHighScores());
- }
+}
 
