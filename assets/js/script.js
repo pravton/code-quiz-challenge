@@ -374,11 +374,11 @@ loadScores();
 // console.log(window.location.pathname);
 
 // if the index.html is loaded display the welcome msg
-if (window.location.pathname == '/index.html') {
+if (window.location.pathname == '/code-quiz-challenge/') {
     addEventListener("onload", welcomeMsgFunc());   
 }
 //if the highscore page is loaded display the highscore 
-else if ((window.location.pathname == '/high-scores.html')) {
+else if ((window.location.pathname == '/code-quiz-challenge/high-scores.html')) {
     addEventListener("onload", displayHighScores());
 }
 
