@@ -227,3 +227,8 @@ button:hover, a:hover {
     }
 }
 
+@media only screen and (max-width: 540px) {
+    .quiz-container {
+        padding: 20px;
+    }
+}
