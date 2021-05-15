@@ -36,8 +36,8 @@ var highScoreStatus = "";
 var pageContentEl = document.querySelector(".main-container");
 var timeCounter = document.querySelector(".time-counter span");
 
-//Declare Timer Variable
-var timer = (dataObj.length * 15) + 1;
+//Variable for timer
+var timer = (dataObj.length * 15);
 //Variable for the question count
 var questionCount = 0;
 //variable for interval
@@ -46,9 +46,18 @@ var interval = null;
 //create a funtion for the timer
 var timerFunc = function() {
     interval = setInterval(() => {
-            timer -= 1;
-            //add the timer to the text content
             timeCounter.textContent = timer;
+            //if the timer is more than 0 start the timer
+            if (timer > 0) {
+                timer -= 1;
+            //else stop the timer and display the result page
+            } else {
+                clearInterval(interval);
+                var quizContainer = document.querySelector(".quiz-container");
+                quizContainer.remove();
+                finalResultPage();
+                resultFunc("You are out of time. Please try again");
+            }
     }, 1000);
 };
 
@@ -92,7 +101,7 @@ var welcomeMsgFunc = function() {
     //Welcome msg button
     var startQuizButton = document.createElement("button");
     startQuizButton.textContent = "Start Quiz";
-    startQuizButton.className = "welcome-msg-button"
+    startQuizButton.className = "welcome-msg-button";
     welcomeMsg.appendChild(startQuizButton);
 
     //add an event listen to startQuizButton
@@ -104,9 +113,7 @@ var welcomeMsgFunc = function() {
 var startQuizButtonButtonHandler = function () {
     quizContainer = document.querySelector(".quiz-container");
     //run the timer
-    if (timer > 0) {
-        timerFunc();
-    } 
+    timerFunc();
 
     quizContainer.remove();
     
@@ -153,7 +160,7 @@ var resultFunc = function(answerResult) {
     //create an h2 element to store the result
     var questionResult = document.createElement("h2");
     questionResult.className = "question-result";
-    questionResult.textContent = answerResult + " Answer!";
+    questionResult.textContent = answerResult + "!";
     resultContainer.appendChild(questionResult);
 };
 
@@ -180,8 +187,13 @@ var answerSubmit = function(event) {
         } else {     
             var incorrect = "INCORRECT";
             resultFunc(incorrect);
-            //reduce the timer by 10 if the answer is incorrect
-            timer -= 10;
+            //reduce the timer by 10 if the answer is incorrect    
+            if (timer > 10) {
+                timer = Math.max(0, timer -= 10);
+            } else {
+                timer = 0;
+            }
+            
         }
                 
     }
@@ -191,8 +203,8 @@ var answerSubmit = function(event) {
 
 //Function to generate the Quiz
 var generateQuiz = function() {
-     if (questionCount < dataObj.length) {
 
+     if (questionCount < dataObj.length && timer >= 1) {
     //Generate Questions
     generateQuestion(questionCount);
     
@@ -204,7 +216,6 @@ var generateQuiz = function() {
     setTimeout(() => {
         answersList.addEventListener("click", answerSubmit);
     }, 500); 
-
     
     } else {
         //display the updated timer 
@@ -251,16 +262,18 @@ var finalResultPage = function() {
     nameInput.className = "name-input";
     nameInput.setAttribute("type", "text");
     nameInput.setAttribute("name", "your-name");
-    nameInput.setAttribute("placeholder", "Enter-your-name");
+    nameInput.setAttribute("placeholder", "Enter your name");
     nameForm.appendChild(nameInput);
     quizContainer.appendChild(nameForm);
+
+    console.log(nameInput.value);
 
     //create a submit button
     var submitButton = document.createElement("button");
     submitButton.className = "buttons-style";
+    submitButton.setAttribute("id", "nameSubmitButton");
     submitButton.textContent = "Submit";
-    //add the link to go highscore page
-    submitButton.setAttribute("onclick", "document.location='high-scores.html'");
+    
     nameForm.appendChild(submitButton);
 
     nameForm.addEventListener("submit", nameSubmitFunc);
@@ -274,32 +287,42 @@ var nameSubmitFunc = function(event) {
 
     //var nameForm = document.querySelector("#name-form-submit");
     var userName = document.querySelector(".name-input").value;
+    //var buttonSubmit = document.querySelector("#nameSubmitButton");
 
-    //declare variable for stopped time
-    stoppedTime = timer;
-
-    //declare variable for new data
-    var newUserData = {
-        name: userName,
-        score: stoppedTime,
-    };
-
-    //check to see if the user beat the highscore
-    for (var i = 0; i < userObj.length; i++) {
-        if (stoppedTime > userObj[i].score) {
-            highScoreStatus = true;
-        }  
-    }
-
-    if (userObj.length === 0 || highScoreStatus) {
-        alert("Congratulations, you beat the highscore!")
-        //add the new data to userObj
-        userObj.push(newUserData);
-        // save the data in local storage
-        localStorage.setItem("userObj", JSON.stringify(userObj));
+    //check to see if user name is empty
+    if (!userName) {
+        alert("Please enter a valid name!");
+        return;
     } else {
-        alert("You did not beat the highscore! Please try again!")
+        document.location='high-scores.html';
+
+        //declare variable for stopped time
+        stoppedTime = timer;
+
+        //declare variable for new data
+        var newUserData = {
+            name: userName,
+            score: stoppedTime,
+        };
+
+        //check to see if the user beat the highscore
+        for (var i = 0; i < userObj.length; i++) {
+            if (stoppedTime > userObj[i].score) {
+                highScoreStatus = true;
+            }  
+        }
+
+        if ((userObj.length === 0 && stoppedTime > 1) || highScoreStatus) {
+            alert("Congratulations, you beat the highscore!")
+            //add the new data to userObj
+            userObj.push(newUserData);
+            // save the data in local storage
+            localStorage.setItem("userObj", JSON.stringify(userObj));
+        } else {
+            alert("You did not beat the highscore! Please try again!")
+        }
     }
+    
 };
 
 //load highscores page
@@ -371,24 +394,24 @@ var displayHighScores = function() {
 loadScores();
 
 
-// if the index.html is loaded display the welcome msg
-if (window.location.pathname == '/code-quiz-challenge/') {
-    addEventListener("onload", welcomeMsgFunc());   
-}
-//if the highscore page is loaded display the highscore 
-else if ((window.location.pathname == '/code-quiz-challenge/high-scores.html')) {
-    addEventListener("onload", displayHighScores());
-}
+// // if the index.html is loaded display the welcome msg
+// if (window.location.pathname == '/code-quiz-challenge/') {
+//     addEventListener("onload", welcomeMsgFunc());   
+// }
+// //if the highscore page is loaded display the highscore 
+// else if ((window.location.pathname == '/code-quiz-challenge/high-scores.html')) {
+//     addEventListener("onload", displayHighScores());
+// }
 
 //display the local path 
 console.log(window.location.pathname);
 
-// // if the index.html is loaded display the welcome msg
-// if (window.location.pathname == '/C:/Users/clint/projects/assignments/code-quiz-challenge/index.html') {
-//     addEventListener("onload", welcomeMsgFunc());   
-// }
-// //if the highscore page is loaded display the highscore 
-// else if ((window.location.pathname == '/C:/Users/clint/projects/assignments/code-quiz-challenge/high-scores.html')) {
-//     addEventListener("onload", displayHighScores());
-// }
+// if the index.html is loaded display the welcome msg
+if (window.location.pathname == '/C:/Users/clint/projects/assignments/code-quiz-challenge/index.html') {
+    addEventListener("onload", welcomeMsgFunc());   
+}
+//if the highscore page is loaded display the highscore 
+else if ((window.location.pathname == '/C:/Users/clint/projects/assignments/code-quiz-challenge/high-scores.html')) {
+    addEventListener("onload", displayHighScores());
+}
 

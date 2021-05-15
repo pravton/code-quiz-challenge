@@ -136,7 +136,7 @@ button:hover, a:hover {
     padding-right: 10px;
     background: var(--primary-color);
     border-radius: 10px;
-    width: 200px;
+    min-width: 250px;
     margin-bottom: 10px;
     text-align: left;
 }
@@ -147,7 +147,7 @@ button:hover, a:hover {
 }
 
 .result-container {
-    width: 50%;
+    min-width: 50%;
     margin-top: 30px;
     border-top: 2px solid var(--secondary-color);
 }
@@ -162,6 +162,10 @@ button:hover, a:hover {
     border-radius: 10px;
     border: none;
     margin-right: 10px;
+}
+
+.name-input:focus {
+    outline: none;
 }
 
 .buttons-style {
