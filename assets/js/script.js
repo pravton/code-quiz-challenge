@@ -394,24 +394,24 @@ var displayHighScores = function() {
 loadScores();
 
 
-// // if the index.html is loaded display the welcome msg
-// if (window.location.pathname == '/code-quiz-challenge/') {
-//     addEventListener("onload", welcomeMsgFunc());   
-// }
-// //if the highscore page is loaded display the highscore 
-// else if ((window.location.pathname == '/code-quiz-challenge/high-scores.html')) {
-//     addEventListener("onload", displayHighScores());
-// }
-
-//display the local path 
-console.log(window.location.pathname);
-
 // if the index.html is loaded display the welcome msg
-if (window.location.pathname == '/C:/Users/clint/projects/assignments/code-quiz-challenge/index.html') {
+if (window.location.pathname == '/code-quiz-challenge/') {
     addEventListener("onload", welcomeMsgFunc());   
 }
 //if the highscore page is loaded display the highscore 
-else if ((window.location.pathname == '/C:/Users/clint/projects/assignments/code-quiz-challenge/high-scores.html')) {
+else if ((window.location.pathname == '/code-quiz-challenge/high-scores.html')) {
     addEventListener("onload", displayHighScores());
 }
+
+// //display the local path 
+// console.log(window.location.pathname);
+
+// // if the index.html is loaded display the welcome msg
+// if (window.location.pathname == '/C:/Users/clint/projects/assignments/code-quiz-challenge/index.html') {
+//     addEventListener("onload", welcomeMsgFunc());   
+// }
+// //if the highscore page is loaded display the highscore 
+// else if ((window.location.pathname == '/C:/Users/clint/projects/assignments/code-quiz-challenge/high-scores.html')) {
+//     addEventListener("onload", displayHighScores());
+// }
 
