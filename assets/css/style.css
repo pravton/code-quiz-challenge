@@ -18,6 +18,10 @@ body {
     min-height: 100vh;
 }
 
+h1,h2,h3,h4,h5, p, a, li, button, input {
+    font-family: 'Lato', Helvetica, Arial, sans-serif;
+}
+
 button:hover, a:hover {
     cursor: pointer;
 }
@@ -41,11 +45,28 @@ button:hover, a:hover {
     padding: 10px;
     justify-content: center;
     text-align: center;
+
 }
 
 .highscores h3 {
     margin-right: 20px;
+    background: var(--primary-color);
+    color: var(--secondary-color);
+    padding: 5px 10px;
+    border-radius: 10px;
+    margin-bottom: 10px;
 }
+
+.highscores h3 a {
+    text-decoration: none;
+    color: var(--secondary-color);
+}
+
+.highscore-title:hover {
+    text-decoration: none;
+    background: var(--tertiary-color);
+}
+
 
 /* Main Style */
 .main-sec {
@@ -115,7 +136,7 @@ button:hover, a:hover {
     padding-right: 10px;
     background: var(--primary-color);
     border-radius: 10px;
-    width: 200px;
+    min-width: 250px;
     margin-bottom: 10px;
     text-align: left;
 }
@@ -126,7 +147,7 @@ button:hover, a:hover {
 }
 
 .result-container {
-    width: 50%;
+    min-width: 50%;
     margin-top: 30px;
     border-top: 2px solid var(--secondary-color);
 }
@@ -141,6 +162,10 @@ button:hover, a:hover {
     border-radius: 10px;
     border: none;
     margin-right: 10px;
+}
+
+.name-input:focus {
+    outline: none;
 }
 
 .buttons-style {
@@ -201,8 +226,26 @@ button:hover, a:hover {
         justify-content: center;
     }
 
+    .quiz-container {
+        min-width: 80%;
+    }
+
     .footer-sec {
         justify-content: center;
     }
 }
 
+@media only screen and (max-width: 540px) {
+    .quiz-container {
+        padding: 20px;
+        margin: 20px;
+    }
+
+    .quiz-container h2 {
+        margin: 30px 0;
+    }
+
+    .main-sec {
+        min-height: auto;
+    }
+}
