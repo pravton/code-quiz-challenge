@@ -87,7 +87,7 @@ button:hover, a:hover {
 
 /* Question Container Style */
 .quiz-container {
-    min-width: 50%;
+    width: 50%;
     margin: 30px;
     padding: 50px;
     border-radius: 10px;
@@ -226,6 +226,10 @@ button:hover, a:hover {
         justify-content: center;
     }
 
+    .quiz-container {
+        min-width: 80%;
+    }
+
     .footer-sec {
         justify-content: center;
     }
@@ -233,7 +237,6 @@ button:hover, a:hover {
 
 @media only screen and (max-width: 540px) {
     .quiz-container {
-        min-width: 80%;
         padding: 20px;
         margin: 20px;
     }
